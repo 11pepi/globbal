@@ -29,22 +29,24 @@ def build_selector(globs):
 
 def crawl(url: str, depth: int):
     global visitedpages
+    
+    if url in visitedpages:
+        print(depth, "skipped", url)
+        return
+    
+    visitedpages.append(url)
+    print(depth, "visiting", url)
     driver.get(url)
+    
     try:
         selector = build_selector(visitedpages)
         e = driver.find_element(By.CSS_SELECTOR, selector)
         href = e.get_attribute("href")
-        print(depth, href, visitedpages)
-        if href in visitedpages:
-            print(depth, "skipped")
-            return
-        else:
-            print("doing thing")
+        if href and href not in visitedpages:
             crawl(href, depth+1)
     except NoSuchElementException:
         print("no element")
-
-    visitedpages.append(url)
+    
     return
 
 crawl("https://www.selenium.dev/documentation/webdriver/elements/", 0)
