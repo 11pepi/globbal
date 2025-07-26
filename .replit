@@ -1,8 +1,9 @@
 entrypoint = "main.py"
-modules = ["python-3.11"]
+modules = ["python-3.11", "postgresql-16"]
 
 [nix]
 channel = "stable-25_05"
+packages = ["geckodriver", "openssl", "postgresql", "sqlite", "chromium", "chromedriver"]
 
 [unitTest]
 language = "python3"
@@ -17,3 +18,15 @@ deploymentTarget = "cloudrun"
 [[ports]]
 localPort = 8080
 externalPort = 80
+
+[workflows]
+runButton = "crawl"
+
+[[workflows.workflow]]
+name = "crawl"
+mode = "sequential"
+author = 15188876
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python crawler/main.py"
