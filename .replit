@@ -1,8 +1,12 @@
+
+Welcome to code-server
+Please log in below. Check the config file at /home/runner/workspace/.config/code-server/config.yaml for the password.
 entrypoint = "main.py"
 modules = ["python-3.11"]
 
 [nix]
 channel = "stable-25_05"
+packages = ["geckodriver"]
 
 [unitTest]
 language = "python3"
