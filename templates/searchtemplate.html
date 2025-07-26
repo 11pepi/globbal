@@ -2,9 +2,14 @@
 <html>
     <head>
         <title>globbal dot com</title>
+        <link rel="stylesheet" href="static/style.css">
     </head>
     <body>
-        <img src="/static/globbal.png" width="25%"><br />
+        <a href="/"><img src="/static/globbal.png" width="25%"></a><br />
+        <form action="/search">
+            <input type="search" id="q" name="q" value="">
+            <input type="submit" value="Search">
+        </form>
         Your search for "{{query}}" returned {{resultnum}} results:<br />
         {{results|safe}}
     </body>

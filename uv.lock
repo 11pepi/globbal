@@ -2,6 +2,12 @@ version = 1
 requires-python = ">=3.11"
 
 [[package]]
+name = "antiorm"
+version = "1.2.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0b/f8/71baa4824d9666c1be51d117119579a97f461ddbded48b2e01a6ad0554b5/antiorm-1.2.1.tar.gz", hash = "sha256:96eb1841ce5163db4cf1dc13f4499ec2d7cffc190cf724b78ffdd3e6b7c4ff93", size = 171953 }
+
+[[package]]
 name = "attrs"
 version = "25.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -75,6 +81,15 @@ dependencies = [
     { name = "tox" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/5b/d0/4d37b35738047d365e331258f86f7c13a3a9f64af701ac24a0edd9451696/creh-urls-redirec-0.1.8.tar.gz", hash = "sha256:4e2f06b2693f262ab5e83d64ea69a0b306f1b0f65f540c42500e1e995801cda8", size = 5259 }
+
+[[package]]
+name = "db"
+version = "0.1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "antiorm" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a9/22/f65d64c83e63790b3273c6adb3bff338ad594f46d84b41bd1f94593b40a6/db-0.1.1.tar.gz", hash = "sha256:980e772f15c1161d3b287ffec4f144e40961b0b3e6d5102809577870bf6c5808", size = 3350 }
 
 [[package]]
 name = "distlib"
@@ -355,6 +370,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "creh-urls-redirec" },
+    { name = "db" },
     { name = "flask" },
     { name = "psycopg2-binary" },
     { name = "selenium" },
@@ -364,6 +380,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "creh-urls-redirec", specifier = ">=0.1.8" },
+    { name = "db", specifier = ">=0.1.1" },
     { name = "flask", specifier = ">=3.1.1" },
     { name = "psycopg2-binary", specifier = "==2.9.10" },
     { name = "selenium", specifier = "==4.27.1" },

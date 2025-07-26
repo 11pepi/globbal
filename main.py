@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, send_file
+from os import name
+from flask import Flask, render_template, request
 import json
 import db
 from sqlalchemy import desc, func
 from model import URLs, Keywords
+from random import choice
 
 LINKS = []
 with open("links.json") as f:

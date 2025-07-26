@@ -2,9 +2,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from selenium.common.exceptions import NoSuchElementException
 import subprocess
-from random import choice
+from concurrent.futures import ThreadPoolExecutor
 
 def system(cmd):
     stdout = subprocess.run(cmd, shell=True, capture_output=True).stdout.decode().strip()
@@ -21,32 +20,33 @@ service = Service(system("which chromedriver"))  # fix this too
 
 driver = webdriver.Chrome(service=service, options=options)
 
-visitedpages = []
+visitedpages = open("crawler/blocklist.txt").readlines()
 
 def build_selector(globs):
     selector = "a[href]"
     return selector
 
-def crawl(url: str, depth: int):
+def crawl(url: str, id: int, depth: int=0):
     global visitedpages
-    
+
     if url in visitedpages:
         print(depth, "skipped", url)
         return
-    
+
     visitedpages.append(url)
-    print(depth, "visiting", url)
+    print(id, depth, "visiting", url)
     driver.get(url)
-    
+
     try:
         selector = build_selector(visitedpages)
-        e = driver.find_element(By.CSS_SELECTOR, selector)
-        href = e.get_attribute("href")
-        if href and href not in visitedpages:
-            crawl(href, depth+1)
-    except NoSuchElementException:
-        print("no element")
-    
-    return
+        e = driver.find_elements(By.CSS_SELECTOR, selector)
+        for i in e:
+            href = i.get_attribute("href")
+            if href and href not in visitedpages:
+                crawl(href, id+1, depth+1)
+    except Exception as e:
+        print(e)
+        exit()
 
-crawl("https://www.selenium.dev/documentation/webdriver/elements/", 0)
+with ThreadPoolExecutor(max_workers=2) as executor:
+    future = executor.submit(crawl, "https://getpocket.com", 1)
