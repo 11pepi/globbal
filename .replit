@@ -1,9 +1,12 @@
+
+Welcome to code-server
+Please log in below. Check the config file at /home/runner/workspace/.config/code-server/config.yaml for the password.
 entrypoint = "main.py"
 modules = ["python-3.11", "postgresql-16"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["geckodriver", "openssl", "postgresql", "sqlite", "chromium", "chromedriver"]
+packages = ["chromedriver", "chromium", "code-server", "geckodriver", "openssl", "postgresql", "sqlite"]
 
 [unitTest]
 language = "python3"
@@ -16,11 +19,14 @@ run = ["python3", "main.py"]
 deploymentTarget = "cloudrun"
 
 [[ports]]
+localPort = 8000
+externalPort = 8000
+
+[[ports]]
 localPort = 8080
 externalPort = 80
 
 [workflows]
-runButton = "crawl"
 
 [[workflows.workflow]]
 name = "crawl"
