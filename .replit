@@ -1,12 +1,15 @@
+entrypoint = "main.py"
 modules = ["python-3.11"]
+
 [nix]
-packages = ["geckodriver"]
+channel = "stable-25_05"
 
-[[ports]]
-localPort = 8000
-externalPort = 8000
+[unitTest]
+language = "python3"
 
-[[ports]]
-localPort = 8080
-externalPort = 80
-are trying to import. 
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix"]
+
+[deployment]
+run = ["python3", "main.py"]
+deploymentTarget = "cloudrun"
