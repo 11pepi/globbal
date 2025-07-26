@@ -93,13 +93,14 @@ def do_crawl(url: str, depth: int = 0):
         return
 
 #do_crawl("https://getpocket.com/home")
+
+import funnyevals
+evaluations = funnyevals.evals
+
 print(f"results")
 print(f"==========================")
 print(f"visited: {visitedhrefs}   ")
 print(f"\n\n\nevaluations: {evaluations}")
-
-from . import funnyevals
-evaluations = funnyevals.evals
 
 @db.db_transaction
 def save(session = None):
