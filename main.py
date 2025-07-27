@@ -1,16 +1,10 @@
 from os import name
 from flask import Flask, render_template, request
-import json
 import db
 from sqlalchemy import desc, func
 from model import URLs, Keywords
 from random import choice
 
-LINKS = []
-with open("links.json") as f:
-    LINKS = json.load(f)
-
-print(LINKS)
 db.create_all_tables()
 
 app = Flask('app')
@@ -30,7 +24,7 @@ def search():
         results="<br />".join(results)
     )
 
-@app.route("/jsonstuff/<text>")
+"""@app.route("/jsonstuff/<text>")
 def json_query(text):
     KEYWORDS = text.split()
     weights = []
@@ -52,7 +46,7 @@ def json_query(text):
         return x
     except TypeError as e:
         print(e)
-        return []
+        return []"""
 
 @app.route("/query/<text>")
 @db.db_transaction

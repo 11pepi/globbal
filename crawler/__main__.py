@@ -10,6 +10,12 @@ import re
 import db
 import model
 
+forbidden = set()
+with open("crawler/words.txt") as f:
+    forbidden = set(f.read().splitlines())
+
+print(forbidden)
+
 def system(cmd):
     stdout = subprocess.run(cmd, shell=True, capture_output=True).stdout.decode().strip()
     print(stdout)
@@ -28,21 +34,25 @@ def build_selector(globs):
     selector = "a[href]"
     return selector
 
-visitedhrefs = []
+visitedhrefs = list(open("blocklist.txt").readlines())
 evaluations = {}
 
-def evaluate_page(href):
-    text = driver.find_element(By.TAG_NAME, "body").text.lower()
-    words = re.findall(r"\b[a-z]{2,}\b", text)
+def get_metas(drvr: webdriver.Chrome):
+    description_e = drvr.find_element(By.CSS_SELECTOR, "meta[name='description']")
+    description = description_e.get_attribute("content")
+    if not description:
+        description = "I'd love to show you a description, but there's literally nothing here"
 
-    word_counts = Counter(words)
-    n = 4  # phrase length
-    forbidden = set(["the", "and", "to", "or", "of", "by", "we", "with", "on"])
+    if "kuro" in description.lower():
+        description = "OMG PROJECT KURO REFERENCE"
 
+    return description
+
+def count_phrases(words: list[str], n: int, num_phrases: int, forbidden: set):
     phrases = []
     phrase_words = []
 
-    for i in range(len(words) - n + 1):
+    for i in range(len(words) - n + 1, num_phrases * n + 1, n):
         phrase = words[i:i + n]
 
         # Skip if any forbidden word is in the phrase
@@ -54,19 +64,29 @@ def evaluate_page(href):
         phrase_words.append(phrase)
 
     phrase_counts = Counter(phrases)
+    return phrases, phrase_words, phrase_counts
 
-    top_words = word_counts.most_common(10)
-    top_phrases = phrase_counts.most_common(10)
+def count_words(text):
+    words = re.findall(r"\b[a-z]{3,}\b", text)
+    words = [word for word in words if word not in forbidden]
 
-    combined = []
-    combined.extend(top_phrases)
-    combined.extend(top_words)
-    combined.extend(phrase_words)
+    word_counts = Counter(words)
+    return words, word_counts
+
+def evaluate_page(href):
+    text = driver.find_element(By.TAG_NAME, "body").text.lower()
+
+    _, word_counts = count_words(text)
+
+    top_words = word_counts.most_common(5)
+    #top_phrases = phrase_counts.most_common(num_phrases)
+
+    description = get_metas(driver)
 
     evaluations[href] = {
         "url": href,
-        "title": driver.title,
-        "keywords": combined
+        "title": f"{driver.title}: {description},
+        "keywords": top_words
     }
 
 def do_crawl(url: str, depth: int = 0):
@@ -94,7 +114,7 @@ def do_crawl(url: str, depth: int = 0):
 
 #do_crawl("https://getpocket.com/home")
 
-import funnyevals
+from . import funnyevals
 evaluations = funnyevals.evals
 
 print(f"results")
@@ -102,11 +122,28 @@ print(f"==========================")
 print(f"visited: {visitedhrefs}   ")
 print(f"\n\n\nevaluations: {evaluations}")
 
+def get_keywords_dict(e):
+    keywords = e.get("keywords")
+    keywords = {k: v for k, v in keywords}
+    return keywords
+
 @db.db_transaction
 def save(session = None):
-    for _, e in evaluations.items():
-        keywords = e.get("keywords")
-        keywords = {k: v for k, v in keywords}
-        print(keywords)
+    for url, e in evaluations.items():
+        url_obj = model.URLs(
+            url = url,
+            title = e.get("title")
+        )
+        session.add(url_obj)
 
+        keywords = get_keywords_dict(e)
+        for keyword, weight in keywords.items():
+            keyword_obj = model.Keywords(
+                word = keyword,
+                weight = int(weight),
+                url = url_obj
+            )
+            session.add(keyword_obj)
+
+driver.quit()
 save()
