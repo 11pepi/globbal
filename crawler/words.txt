@@ -239,3 +239,9 @@ abode
 appimage
 ラビットホール
 commonjs
+skibidi
+sigma
+edging
+mewing
+mogging
+lankybox
