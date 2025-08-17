@@ -2,6 +2,9 @@
 > "why did i make this"
 > \-me, after making this
 
+> [!WARNING]
+> Because of how good Globbal is, the Google Ninjas may hunt you down for using a superior search engine, leading to death. Stay safe!
+
 ## Features
 - [x] Search Page
 - [x] Web Crawler
